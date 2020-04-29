@@ -50,6 +50,6 @@ DepartureRequest request = new DepartureRequest("AA229AA", timeOfDeparture);
 long bill = tollParking.handleDeparture(request);
 ```
 "AA229AA" is the car's license plate. The times are java.util.Date.
-This project uses Lombok to automatically generate getters/setters, among other things.
 
+This project uses Lombok to automatically generate getters/setters, among other things.
 If you are using IntelliJ you might have to install Lombok IntelliJ plugin.
