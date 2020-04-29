@@ -39,6 +39,7 @@ You can then add Parking Spots to the parking like this:
 tollParking.getParkingSpotList().add(new ParkingSpot("Code01", PossibleCarType.GASOLINE));
 ```
 The TollParking object has two methods: handleArrival and handleDeparture.
+
 **handleArrival** will return the code of an available spot, or throw a NoAvailableSpotException if all the spot of the same type as the requesting car are used.
 ```java
 ArrivalRequest request = new ArrivalRequest(PossibleCarType.GASOLINE, "AA229AA", timeOfArrival);  
