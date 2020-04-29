@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TollParkingTest {
 
@@ -22,8 +21,7 @@ public class TollParkingTest {
     @Test
     public void shouldCorrectlyHandleDepartureRequest() throws CarIsNotPresentException, NoAvailableSpotException {
 
-        TollParking tollParking = new TollParking();
-        tollParking.setBillingPolicy(new HourlyBillingPolicy(2));
+        TollParking tollParking = new TollParking(new HourlyBillingPolicy(2));
 
         tollParking.getParkingSpotList().add(new ParkingSpot("Code01", PossibleCarType.GASOLINE));
 
@@ -31,10 +29,10 @@ public class TollParkingTest {
 
         DepartureRequest departureRequest = new DepartureRequest("QWER01", timeOfDeparture);
 
-        assertEquals("the 'handleArrival' method should return the correct parking spot code",
-                "Code01", tollParking.handleArrival(arrivalRequest));
+        // the 'handleArrival' method should return the correct parking spot code
+        assertEquals("Code01", tollParking.handleArrival(arrivalRequest));
 
-        assertTrue("the handle departure method should return 4",
-                tollParking.handleDeparture(departureRequest) == 4);
+        // the handle departure method should return the correct bill
+        assertEquals(4, tollParking.handleDeparture(departureRequest));
     }
 }

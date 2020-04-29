@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TollParkingArrivalTest {
 
@@ -29,24 +29,23 @@ public class TollParkingArrivalTest {
 
         ArrivalRequest request = new ArrivalRequest(PossibleCarType.GASOLINE, "QWER01", new Date());
 
-        assertEquals("the 'handleArrival' method should return the correct parking spot code",
-                "1AG", tollParking.handleArrival(request));
-        assertTrue("the spot at index 1 should be in use...",
-                tollParking.getParkingSpotList().get(1).isInUse());
-        assertFalse("...while the number 0...",
-                tollParking.getParkingSpotList().get(0).isInUse());
-        assertFalse("...and number 2 should NOT be in use",
-                tollParking.getParkingSpotList().get(2).isInUse());
-        assertEquals("the license plate should be correctly registered",
-                request.getCarLicensePlate(),
+        // "the 'handleArrival' method should return the correct parking spot code",
+        assertEquals("1AG", tollParking.handleArrival(request));
+        // the spot at index 1 should be in use...
+        assertTrue(tollParking.getParkingSpotList().get(1).isInUse());
+        // ...while the number 0 and 2 should NOT be in use...
+        assertFalse(tollParking.getParkingSpotList().get(0).isInUse());
+        assertFalse(tollParking.getParkingSpotList().get(2).isInUse());
+        // the license plate should be correctly registered
+        assertEquals(request.getCarLicensePlate(),
                 tollParking.getParkingSpotList().get(1).getLicensePlateOfOccupyingCar());
-        assertEquals("the arrival time should be correctly registered",
-                request.getArrivalDate(),
+        // "the arrival time should be correctly registered"
+        assertEquals(request.getArrivalDate(),
                 tollParking.getParkingSpotList().get(1).getTimeOfArrival());
     }
 
     @Test
-    public void shouldReturnExceptionIfListIsEmpty() {
+    public void shouldThrowExceptionIfListIsEmpty() {
 
         TollParking tollParking = new TollParking();
 
@@ -56,7 +55,7 @@ public class TollParkingArrivalTest {
     }
 
     @Test
-    public void shouldReturnExceptionIfListDoesNotHaveCorrectType() {
+    public void shouldThrowExceptionIfListDoesNotHaveCorrectType() {
 
         TollParking tollParking = new TollParking();
 
@@ -69,7 +68,7 @@ public class TollParkingArrivalTest {
     }
 
     @Test
-    public void shouldReturnExceptionIfAllSpotAreInUse() {
+    public void shouldThrowExceptionIfAllSpotAreInUse() {
 
         TollParking tollParking = new TollParking();
 

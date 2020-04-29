@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 public class TollParkingDepartureTest {
 
@@ -19,7 +19,7 @@ public class TollParkingDepartureTest {
     Date timeOfDeparture = new Date(1575198000000L);  // Sun Dec 01 12:00:00 CET 2019
 
     @Test
-    public void shouldCorrectlyHandleDepartureRequest() throws CarIsNotPresentException {
+    public void shouldCorrectlyHandleHappyPath() throws CarIsNotPresentException {
 
         TollParking tollParking = new TollParking();
         tollParking.setBillingPolicy(new HourlyBillingPolicy(1));
@@ -33,15 +33,15 @@ public class TollParkingDepartureTest {
 
         DepartureRequest request = new DepartureRequest("ASDF00", timeOfDeparture);
 
-        assertTrue("the handle request method should return true",
-                tollParking.handleDeparture(request) == 2);
+        // the handle request method should return true
+        assertEquals(2, tollParking.handleDeparture(request));
 
-        assertFalse("the parking spot should be set to not in use",
-                parkingSpot.isInUse());
+        // the parking spot should be set to not in use
+        assertFalse(parkingSpot.isInUse());
     }
 
     @Test
-    public void shouldReturnExceptionIfListIsEmpty() {
+    public void shouldThrowExceptionIfListIsEmpty() {
 
         TollParking tollParking = new TollParking();
 
@@ -51,7 +51,7 @@ public class TollParkingDepartureTest {
     }
 
     @Test
-    public void shouldReturnExceptionIfLicensePlateDoesNotMatch() {
+    public void shouldThrowExceptionIfLicensePlateDoesNotMatch() {
 
         TollParking tollParking = new TollParking();
 
