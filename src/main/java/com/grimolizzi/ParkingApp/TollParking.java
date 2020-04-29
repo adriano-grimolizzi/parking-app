@@ -2,6 +2,7 @@ package com.grimolizzi.ParkingApp;
 
 import com.grimolizzi.ParkingApp.billingPolicies.BillingPolicy;
 import com.grimolizzi.ParkingApp.errorHandling.CarIsNotPresentException;
+import com.grimolizzi.ParkingApp.errorHandling.NoAvailableSpotException;
 import com.grimolizzi.ParkingApp.model.ArrivalRequest;
 import com.grimolizzi.ParkingApp.model.DepartureRequest;
 import com.grimolizzi.ParkingApp.model.ParkingSpot;
@@ -24,27 +25,23 @@ public class TollParking {
         this.billingPolicy = billingPolicy;
     }
 
-    public boolean handleArrival(ArrivalRequest request) {
-        boolean requestHasBeenHandled = false;
+    public String handleArrival(ArrivalRequest request) throws NoAvailableSpotException {
 
         Optional<ParkingSpot> parkingSpotOptional = this.parkingSpotList.stream()
-                .filter(parkingSpot -> !parkingSpot.isInUse())
-                .filter(parkingSpot -> parkingSpot.getPossibleCarType().equals(request.getPossibleCarType()))
+                .filter(parkingSpot -> !parkingSpot.isInUse()
+                        && parkingSpot.getPossibleCarType().equals(request.getPossibleCarType()))
                 .findAny();
 
         if (parkingSpotOptional.isPresent()) {
             ParkingSpot parkingSpot = parkingSpotOptional.get();
-            parkingSpot.setInUse(true);
-            parkingSpot.setLicensePlateOfOccupyingCar(request.getCarLicensePlate());
-            parkingSpot.setTimeOfArrival(request.getArrivalDate());
-            requestHasBeenHandled = true;
+            parkingSpot.handleArrivalRequest(request);
+            return parkingSpot.getCode();
+        } else {
+            throw new NoAvailableSpotException();
         }
-        return requestHasBeenHandled;
     }
 
     public long handleDeparture(DepartureRequest request) throws CarIsNotPresentException {
-
-        Date arrivalDate;
 
         Optional<ParkingSpot> parkingSpotOptional = this.parkingSpotList
                 .stream()
@@ -53,14 +50,11 @@ public class TollParking {
 
         if (parkingSpotOptional.isPresent()) {
             ParkingSpot parkingSpot = parkingSpotOptional.get();
-            parkingSpot.setInUse(false);
-            parkingSpot.setLicensePlateOfOccupyingCar(null);
-            arrivalDate = parkingSpot.getTimeOfArrival();
-            parkingSpot.setTimeOfArrival(null);
+            Date timeOfArrival = parkingSpot.getTimeOfArrival();
+            parkingSpot.reset();
+            return this.billingPolicy.computeBill(timeOfArrival, request.getDepartureDate());
         } else {
             throw new CarIsNotPresentException();
         }
-
-        return this.billingPolicy.computeBill(arrivalDate, request.getDepartureDate());
     }
 }
